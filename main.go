@@ -5,16 +5,26 @@ import (
 	"fmt"
 	"net"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	listener, error := net.Listen("tcp", ":8080")
+	error := godotenv.Load()
+
+	if error != nil {
+		fmt.Println("Error loading .env file")
+	}
+
+	port := os.Getenv("PORT")
+
+	listener, error := net.Listen("tcp", ":"+port)
 	if error != nil {
 		fmt.Println("Error Starting TCP Server: ", error)
 		os.Exit(1)
 	}
 	defer listener.Close()
-	fmt.Println("TCP Server is listening on port 8080")
+	fmt.Println("TCP Server is listening on port " + port)
 	for {
 		conn, error := listener.Accept()
 		if error != nil {
